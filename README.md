@@ -4,7 +4,7 @@ simu_binary_simple : simulation example, comparison between PMP and MF for binar
 
 simu_Gaussian_simple: simulation example, comparison between PMP and MF for Gaussian dynamic latent space model
 
-classroom : real data example, 
+classroom : real data example,  
 
 mean_field_DN : function, mean-field for binary dynamic latent space model
 
