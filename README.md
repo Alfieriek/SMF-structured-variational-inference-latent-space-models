@@ -1,4 +1,4 @@
-# PMP-dynamic-variational-inference
+# Reproducing examples
 
 ## **simu_binary_simple** : 
 simulation example, comparison between PMP and MF for binary dynamic latent space model
@@ -8,6 +8,9 @@ simulation example, comparison between PMP and MF for Gaussian dynamic latent sp
 
 ## **classroom** : 
 real data example, visualization of evolution of the estimated latent positions    
+
+
+# List of functions
 
 ## mean_field_DN : 
 function, mean-field for binary dynamic latent space model
