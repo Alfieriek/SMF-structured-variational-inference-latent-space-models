@@ -17,12 +17,11 @@
 
 
 rm(list = ls())
-set.seed(2020)
+set.seed(2023)
 library(MASS)
 library(mvtnorm)
 library(igraph)
 library(Bessel)
-
 
 
 file_location = dirname(rstudioapi::getActiveDocumentContext()$path)
@@ -36,15 +35,15 @@ source('mcmc_Gaussian_adaptive.R')
 
 #--------------------------------Data Generation---------------------
 
-n = 10   # n = 100;  
+n = 20   # n = 100;  
 
 T = 100   # T = 100;
 
-tau = 0.01 # tau=0.01,0.02,0.05,0.1,0.2,0.3,0.5
+tau = 0.1
 
-rho = 0 
+rho = 0.5 
 
-beta = 0 # 
+beta = -1 # 
 
 
 d = 2   # dimension for the latent vectors, d = 2 for better visualization
@@ -106,46 +105,72 @@ sigma_X1 = sigma_0;   # initial sd of X[[1]],
 
 trans_sd = tau;   # sd of transition distribution, 
 
-gap =1e-3
+gap =1e-4
 
 min_iter = 1
 
 
 start_time_MF <- Sys.time()
 
-MF_list_adaptive = mcmc_GaussianDN_adaptive(Y=Y ,mean_beta_prior=mean_beta_prior, 
-                                            max_iter=200, sigma_beta_prior=sigma_beta_prior,sigma= sigma,X_true=X,  gap= 1e-6)
+MF_list_adaptive = mcmc_GaussianDN_adaptive(Y=Y ,mean_beta_prior=mean_beta_prior, d=d,
+                                            max_iter=100, sigma_beta_prior=sigma_beta_prior,sigma= sigma,gap= 1e-4)
 end_time_MF <- Sys.time()
+
+# New code for max_iter=50
+start_time_MF_50 <- Sys.time()
+
+MF_list_adaptive_50 = mcmc_GaussianDN_adaptive(Y=Y ,mean_beta_prior=mean_beta_prior, d=d,
+                                               max_iter=50, sigma_beta_prior=sigma_beta_prior,sigma= sigma,  gap= 1e-4)
+end_time_MF_50 <- Sys.time()
+
+# New code for max_iter=200
+start_time_MF_200 <- Sys.time()
+
+MF_list_adaptive_200 = mcmc_GaussianDN_adaptive(Y=Y ,mean_beta_prior=mean_beta_prior, d=d,
+                                                max_iter=200, sigma_beta_prior=sigma_beta_prior,sigma= sigma,  gap= 1e-4)
+end_time_MF_200 <- Sys.time()
 
 
 start_time_Mix <- Sys.time()
 
-Mix_list_adaptive = mix_Gaussian_adaptive(Y=Y ,mean_beta_prior=mean_beta_prior, sigma_beta_prior=sigma_beta_prior, sigma = sigma, X_true=X, gap = 1e-6)
+Mix_list_adaptive = mix_Gaussian_adaptive(Y=Y ,mean_beta_prior=mean_beta_prior, sigma_beta_prior=sigma_beta_prior,
+                                          global_prior='Cauthy',sigma = sigma, gap = 1e-4)
 
 end_time_Mix <- Sys.time()
 
 
 
 pred_mean_MF_adaptive = matrix(rep(0,T*n*(n-1)),nrow = T)
+pred_mean_MF_adaptive_50 = matrix(rep(0,T*n*(n-1)),nrow = T)
+pred_mean_MF_adaptive_200 = matrix(rep(0,T*n*(n-1)),nrow = T)
+
 pred_mean_Mix_adaptive = matrix(rep(0,T*n*(n-1)),nrow = T)
 res =  matrix(rep(0,T*n*(n-1)),nrow = T)
 
 
 MF_adaptive_sm = rep(0,T)
 Mix_adaptive_sm = rep(0,T)
+MF_adaptive_sm_50 = rep(0,T)
+MF_adaptive_sm_200 = rep(0,T)
+
 
 for (t in 1:T){
   r=1
   for (i in 1:n){
     for (j in 1:n){
       if (j!=i){
+        # Compute predicted means for new MF cases
+        pred_mean_MF_adaptive_50[t,r] = t(MF_list_adaptive_50$Mean_X[[t]][i,])%*% MF_list_adaptive_50$Mean_X[[t]][j,]+MF_list_adaptive_50$mean_beta
+        pred_mean_MF_adaptive_200[t,r] = t(MF_list_adaptive_200$Mean_X[[t]][i,])%*% MF_list_adaptive_200$Mean_X[[t]][j,]+MF_list_adaptive_200$mean_beta
         pred_mean_MF_adaptive[t,r] = t(MF_list_adaptive$Mean_X[[t]][i,])%*% MF_list_adaptive$Mean_X[[t]][j,]+MF_list_adaptive$mean_beta
         pred_mean_Mix_adaptive[t,r] = t(Mix_list_adaptive$Mean_X[[t]][i,])%*% Mix_list_adaptive$Mean_X[[t]][j,]+Mix_list_adaptive$mean_beta
-        res[t,r] = t(X[[t]][i,]) %*% X[[t]][j,]
+        res[t,r] = t(X[[t]][i,]) %*% X[[t]][j,]+beta
         r=r+1
       }
     }
   }
+  MF_adaptive_sm_50[t] = sum((pred_mean_MF_adaptive_50[t,]-res[t,])^2/n/T/(n-1))
+  MF_adaptive_sm_200[t] = sum((pred_mean_MF_adaptive_200[t,]-res[t,])^2/n/T/(n-1))
   MF_adaptive_sm[t] = sum((pred_mean_MF_adaptive[t,]-res[t,])^2/n/T/(n-1))
   Mix_adaptive_sm[t] = sum((pred_mean_Mix_adaptive[t,]-res[t,])^2/n/T/(n-1))
 }
@@ -153,16 +178,24 @@ for (t in 1:T){
 
 
 
-cat('Cycles for MCMC:',MF_list_adaptive$iter,'\n')
-cat('Running time for MCMC:',as.numeric(end_time_MF - start_time_MF, units = "secs"),'\n')
-cat('Parameter estimation error for MCMC:',sqrt(sum(MF_adaptive_sm)),'\n')
-
-
 
 cat('Cycles for adaptive SMF:',Mix_list_adaptive$iter,'\n')
 cat('Running time for SMF:',end_time_Mix-start_time_Mix,'\n')
-
 cat('Parameter estimation error for adaptive SMF:',sqrt(sum(Mix_adaptive_sm)),'\n')
 
+
+cat('Cycles for adaptive MF with 50 iterations:',MF_list_adaptive_50$iter,'\n')
+cat('Running time for adaptive MF with 50 iterations:',end_time_MF_50-start_time_MF_50,'\n')
+cat('Parameter estimation error for adaptive MF with 50 iterations:',sqrt(sum(MF_adaptive_sm_50)),'\n')
+
+
+cat('Cycles for adaptive MF with 100 iterations:',MF_list_adaptive$iter,'\n')
+cat('Running time for adaptive MF:',end_time_MF-start_time_MF,'\n')
+cat('Parameter estimation error for adaptive MF:',sqrt(sum(MF_adaptive_sm)),'\n')
+
+
+cat('Cycles for adaptive MF with 200 iterations:',MF_list_adaptive_200$iter,'\n')
+cat('Running time for adaptive MF with 200 iterations:',as.numeric(end_time_MF_200-start_time_MF_200,units = "secs"),'\n')
+cat('Parameter estimation error for adaptive MF with 200 iterations:',sqrt(sum(MF_adaptive_sm_200)),'\n')
 
 

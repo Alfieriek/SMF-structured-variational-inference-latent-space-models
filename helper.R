@@ -1,6 +1,8 @@
 # Some helper functions
 
-
+library(pROC)
+library(Bessel)
+library(BayesLogit)
 
 procrustes_r <- function(A, B, normalize=F ){
   # center and normalize A 
@@ -91,14 +93,14 @@ plot_clus = function(Xm1,Y1,clus,t){
   Y1[lower.tri(Y1, diag = FALSE)] = 0
   NodeList <- data.frame((1:n), x=Xm1[,2] ,y=Xm1[,1])
   #  Edge_list = data.frame(matrix(ncol = 2, nrow = 0))
-  Edge_list = as_data_frame(graph_from_adjacency_matrix(Y1,mode="undirected"),'edge')
+  Edge_list = igraph::as_data_frame(graph_from_adjacency_matrix(Y1,mode="undirected"),'edge')
   pal <- brewer.pal(4,"Accent")
   vertex.col = pal[factor(clus)]
   a<- graph_from_data_frame(vertices = NodeList, d= Edge_list, directed = FALSE)
-  plot.igraph(a,vertex.color=vertex.col,vertex.shape=setdiff(shapes(), "")[clus], vertex.label=NA,vertex.size=12,
-              edge.width=0.1)
-  title(main=paste("Latent positions for time point",t,sep = ' '),cex.main=1.8)
-  legend('topleft',legend=levels(factor(clus)),pch=c(1,0),bty = "n",cex=1.6)
+  plot.igraph(a,vertex.color=vertex.col,vertex.shape=setdiff(shapes(), "")[clus], vertex.label=1:n,vertex.size=12,
+              edge.width=0.1,axes=TRUE)
+#  title(main=paste("Latent positions for time point",t,sep = ' '),cex.main=1.8)
+#  legend('topright',legend=levels(factor(clus)),pch=c(1,0),col=vertex.col,bty = "n",cex=1.6)
   return(NULL)
 }
 
