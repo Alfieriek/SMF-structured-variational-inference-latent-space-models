@@ -36,9 +36,9 @@ source('mcmc_Gaussian_adaptive.R')
 
 #--------------------------------Data Generation---------------------
 
-n = 10   # n = 100;  
+n = 20   # n = 100;  
 
-T = 100   # T = 100;
+T = 30   # T = 100;
 
 tau = 0.01 # tau=0.01,0.02,0.05,0.1,0.2,0.3,0.5
 
@@ -61,10 +61,12 @@ initial_Sigma <- sigma_0^2*diag(d)
 
 X <- vector("list", T)
 
+# This is essentially sampling 10 points from the circle with radius 0.0001.
 for ( i in 1:n){
   X[[1]] = rbind(X[[1]], rmvnorm(n=1,mean=initial_mean[,initial_components[i]], sigma=initial_Sigma))
 }
 
+# Just populating every entrie in the list if 1:T elements with X[[1]] for all. 
 for(t in 1:(T-1)){X[[t+1]] = X[[1]]}
 
 
@@ -78,13 +80,30 @@ for ( t1 in 1:(T)){
 
 tau_Sigma = tau^2*sig_eps
 
-
+# Updating the ith row of the X[[t]] for t = 2:T in the loop i = 1:n.
 for(i in 1:n){
   eps =  rmvnorm(n=d,mean=rep(0,T), sigma= tau_Sigma)
   for (t in 2:T) {
     X[[t]][i,] <- X[[t-1]][i,] +  eps[,t-1]
   }
 }
+
+# Plotting Latent Positions
+par(mfrow = c(2,5))
+for (i in 1:10) { 
+  plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i))
+  text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 0.5, pos = 2, col = "blue")
+  abline(h = 0, v = 0, col = "black", lty = 2)
+  }
+
+
+# Create a basic plot
+plot(1:10, 1:10, type = "p", pch = 19, col = "blue")
+
+# Add a circle to the plot
+symbols(x = 5, y = 5, circles = 2, add = TRUE, inches = FALSE)
+abline(h = 0, v = 0, col = "black", lty = 2)
+
 
 
 Y = vector("list", T)
