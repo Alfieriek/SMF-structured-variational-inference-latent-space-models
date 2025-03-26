@@ -66,7 +66,21 @@ for ( i in 1:n){
   X[[1]] = rbind(X[[1]], rmvnorm(n=1,mean=initial_mean[,initial_components[i]], sigma=initial_Sigma))
 }
 
-# Just populating every entrie in the list if 1:T elements with X[[1]] for all. 
+# Plotting First Latent Position
+
+plot(X[[1]][,1],X[[1]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",1),pch = 16,cex = 1)
+text(X[[1]][,1], X[[1]][,2], c(1:n),cex = 0.5, pos = 2, col = "blue")
+abline(h = 0, v = 0, col = "black", lty = 2)
+
+# Add contour lines
+z <- outer(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), function(x, y) {
+  dmvnorm(cbind(x, y), mean = initial_mean[,initial_components[i]], sigma = initial_Sigma)
+})
+contour(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), z , add = T, drawlabels = F, col = "red")
+
+
+
+# Just populating every entries in the list if 1:T elements with X[[1]] for all. 
 for(t in 1:(T-1)){X[[t+1]] = X[[1]]}
 
 
@@ -89,20 +103,12 @@ for(i in 1:n){
 }
 
 # Plotting Latent Positions
-par(mfrow = c(2,5))
-for (i in 1:10) { 
-  plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i))
-  text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 0.5, pos = 2, col = "blue")
+par(mfrow = c(4,2))
+for (i in 1:T) { 
+  plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i),pch = 16,cex = 1.5)
+  text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
   abline(h = 0, v = 0, col = "black", lty = 2)
   }
-
-
-# Create a basic plot
-plot(1:10, 1:10, type = "p", pch = 19, col = "blue")
-
-# Add a circle to the plot
-symbols(x = 5, y = 5, circles = 2, add = TRUE, inches = FALSE)
-abline(h = 0, v = 0, col = "black", lty = 2)
 
 
 
@@ -111,6 +117,21 @@ Y = vector("list", T)
 for (t in 1:T){
   Y[[t]] = positions_to_edges_Gaussian(X[[t]],beta,sigma)
 }
+
+
+# positions_to_edges_Gaussian simple example
+# A <- X[[1]]
+#   n = length(A[,1])
+#   edge_mat = matrix(rep(0,n*n),nrow=n)
+# 
+#   for (i in 1:n){
+#     for(j in 1:n){
+#       if(j > i)
+#       {edge_mat[j,i] = rnorm(n=1,mean=beta+t(A[i,])%*%A[j,],sd=sigma)}
+#     }
+#   }
+#   edge_mat = edge_mat+ t(edge_mat)
+# 
 
 
 
