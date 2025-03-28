@@ -154,6 +154,7 @@ alpha=0.95
       
       for (t in 1:T){
         
+        # Extracting variables used in the ith updates-----------------------------\/
         for (j in inde[1:n]){
           if (which(j==inde) > which(i==inde)){
             M_i = Mean_X[[t]][i,]
@@ -167,6 +168,7 @@ alpha=0.95
             V_i = Sigma_X[[t]][[i]]
             V_j = Sigma_X_new[[t]][[j]] 
           }
+          # Extracting variables used in the ith updates-----------------------------/\
           
           if (j!= i){
             V_X_cumulative[[t]][[i]] = V_X_cumulative[[t]][[i]] + sigma^(-2)*( M_j %*% t(M_j) + V_j) *alpha
