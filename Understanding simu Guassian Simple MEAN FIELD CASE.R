@@ -35,7 +35,7 @@ source('mcmc_Gaussian_adaptive.R')
 # 
 
 #--------------------------------Data Generation---------------------
-
+set.seed(2025)
 n = 15   # n = 100;  
 
 T = 20   # T = 100;
@@ -68,9 +68,9 @@ for ( i in 1:n){
 
 # Plotting First Latent Position
 
-plot(X[[1]][,1],X[[1]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",1),pch = 16,cex = 1)
-text(X[[1]][,1], X[[1]][,2], c(1:n),cex = 0.5, pos = 2, col = "blue")
-abline(h = 0, v = 0, col = "black", lty = 2)
+# plot(X[[1]][,1],X[[1]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",1),pch = 16,cex = 1)
+# text(X[[1]][,1], X[[1]][,2], c(1:n),cex = 0.5, pos = 2, col = "blue")
+# abline(h = 0, v = 0, col = "black", lty = 2)
 
 # Add contour lines
 z <- outer(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), function(x, y) {
@@ -102,13 +102,13 @@ for(i in 1:n){
   }
 }
 
-# Plotting Latent Positions
-par(mfrow = c(4,2))
-for (i in 1:T) { 
-  plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i),pch = 16,cex = 1.5)
-  text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
-  abline(h = 0, v = 0, col = "black", lty = 2)
-}
+# # Plotting Latent Positions
+# par(mfrow = c(4,2))
+# for (i in 1:T) { 
+#   plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i),pch = 16,cex = 1.5)
+#   text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
+#   abline(h = 0, v = 0, col = "black", lty = 2)
+# }
 
 
 
@@ -189,17 +189,40 @@ SMF_SMF_EG <- mix_Gaussian_adaptive(Y=Y ,
 SMF_SMF_EG_MEANs <- SMF_SMF_EG$Mean_X
 
 # Plotting Latent Positions
-par(mfrow = c(2,2))
+# par(mfrow = c(2,2))
+# for (i in 1:T) { 
+#   plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i),pch = 16,cex = 1.5, col = "blue")
+#   text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
+#   abline(h = 0, v = 0, col = "black", lty = 2)
+#   points(MF_SMF_EG_MEANs[[i]][,1],MF_SMF_EG_MEANs[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1),pch = 18,cex = 1.5, col = "red")
+#   text(MF_SMF_EG_MEANs[[i]][,1], MF_SMF_EG_MEANs[[i]][,2], c(1:n),cex = 1, pos = 2, col = "red")
+#   points(SMF_SMF_EG_MEANs[[i]][,1],SMF_SMF_EG_MEANs[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1),pch = 20,cex = 1.5, col = "orange")
+#   text(SMF_SMF_EG_MEANs[[i]][,1], SMF_SMF_EG_MEANs[[i]][,2], c(1:n),cex = 1, pos = 2, col = "orange")
+#   legend("topleft", legend=c("TRUE","MF_VI"), col=c("blue", "red","orange"), pch=c(16,18,20), cex=0.55)
+# }
+
+
+
+
+# Plotting Latent Positions
+par(mfrow = c(2,1))
 for (i in 1:T) { 
-  plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i),pch = 16,cex = 1.5, col = "blue")
+  plot(X[[i]][,1],X[[i]][,2], xlim = c(min(X[[i]][,1],MF_SMF_EG_MEANs[[i]][,1],SMF_SMF_EG_MEANs[[i]][,1]),
+                                       max(X[[i]][,1],MF_SMF_EG_MEANs[[i]][,1],SMF_SMF_EG_MEANs[[i]][,1])),
+                                       ylim = c(min(X[[i]][,2],MF_SMF_EG_MEANs[[i]][,2],SMF_SMF_EG_MEANs[[i]][,2]),
+                                                max(X[[i]][,2],MF_SMF_EG_MEANs[[i]][,2],SMF_SMF_EG_MEANs[[i]][,2])),
+                                                main = paste("Time Step",i),pch = 16,cex = 1.5, col = "blue")
   text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
   abline(h = 0, v = 0, col = "black", lty = 2)
-  points(MF_SMF_EG_MEANs[[i]][,1],MF_SMF_EG_MEANs[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1),pch = 18,cex = 1.5, col = "red")
+  points(MF_SMF_EG_MEANs[[i]][,1],MF_SMF_EG_MEANs[[i]][,2],pch = 18,cex = 1.5, col = "red")
   text(MF_SMF_EG_MEANs[[i]][,1], MF_SMF_EG_MEANs[[i]][,2], c(1:n),cex = 1, pos = 2, col = "red")
-  points(SMF_SMF_EG_MEANs[[i]][,1],SMF_SMF_EG_MEANs[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1),pch = 20,cex = 1.5, col = "orange")
+  points(SMF_SMF_EG_MEANs[[i]][,1],SMF_SMF_EG_MEANs[[i]][,2],pch = 10,cex = 1.5, col = "orange")
   text(SMF_SMF_EG_MEANs[[i]][,1], SMF_SMF_EG_MEANs[[i]][,2], c(1:n),cex = 1, pos = 2, col = "orange")
-  legend("topleft", legend=c("TRUE","MF_VI"), col=c("blue", "red","orange"), pch=c(16,18,20), cex=0.55)
+  legend("topright", legend=c("TRUE","MF_VI","SMF_VI"), col=c("blue", "red","orange"), pch=c(16,18,10), cex=0.55)
 }
+
+
+
 
 
 
