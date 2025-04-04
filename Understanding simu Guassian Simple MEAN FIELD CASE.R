@@ -35,12 +35,12 @@ source('mcmc_Gaussian_adaptive.R')
 # 
 
 #--------------------------------Data Generation---------------------
-set.seed(2025)
-n = 15   # n = 100;  
+set.seed(2020)
+n = 25   # n = 100;  
 
-T = 20   # T = 100;
+T = 30   # T = 100;
 
-tau = 0.01 # tau=0.01,0.02,0.05,0.1,0.2,0.3,0.5
+tau = 1.2 # tau=0.01,0.02,0.05,0.1,0.2,0.3,0.5
 
 rho = 0 
 
@@ -73,10 +73,10 @@ for ( i in 1:n){
 # abline(h = 0, v = 0, col = "black", lty = 2)
 
 # Add contour lines
-z <- outer(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), function(x, y) {
-  dmvnorm(cbind(x, y), mean = initial_mean[,initial_components[i]], sigma = initial_Sigma)
-})
-contour(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), z , add = T, drawlabels = F, col = "red")
+# z <- outer(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), function(x, y) {
+#   dmvnorm(cbind(x, y), mean = initial_mean[,initial_components[i]], sigma = initial_Sigma)
+# })
+# contour(seq(-0.1, 0.1, length.out = 100), seq(-0.1, 0.1, length.out = 100), z , add = T, drawlabels = F, col = "red")
 
 
 
@@ -102,13 +102,13 @@ for(i in 1:n){
   }
 }
 
-# # Plotting Latent Positions
-# par(mfrow = c(4,2))
-# for (i in 1:T) { 
-#   plot(X[[i]][,1],X[[i]][,2], xlim = c(-0.1,0.1), ylim = c(-0.1,0.1), main = paste("Time Step",i),pch = 16,cex = 1.5)
-#   text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
-#   abline(h = 0, v = 0, col = "black", lty = 2)
-# }
+# Plotting Latent Positions
+par(mfrow = c(4,2))
+for (i in 1:T) {
+  plot(X[[i]][,1],X[[i]][,2], xlim = c(min(unlist(X)),max(unlist(X))), ylim = c(min(unlist(X)),max(unlist(X))), main = paste("Time Step",i),pch = 16,cex = 1.5)
+  text(X[[i]][,1], X[[i]][,2], c(1:n),cex = 1, pos = 2, col = "blue")
+  abline(h = 0, v = 0, col = "black", lty = 2)
+}
 
 
 
