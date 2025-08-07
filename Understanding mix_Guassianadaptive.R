@@ -286,6 +286,7 @@ IG_2 =1/2
       #-----------------------------------------------------------------------
       
       
+      #----------------------------------------------------------------------- This is the first equation from eq(22)
       for(t in 1:T){
         if(t == 1)
         { Sigma_X_new[[t]][[i]] = ginv(sigma_X1^(-2)*diag(d)+rho^2*trans_sd^(-2)*diag(d)+ginv(Backward.var.new[[t+1]][[i]])+V_X_cumulative[[t]][[i]])
@@ -316,8 +317,9 @@ IG_2 =1/2
         }
         
       }
+      #----------------------------------------------------------------------- 
       
-      
+      #----------------------------------------------------------------------- This is the second equation from eq(22)
       Cross_cov[[1]][[i]][1:d,1:d] = sigma_X1^(-2)*diag(d)+trans_sd^(-2)*diag(d)+V_X_cumulative[[1]][[i]]
       Cross_cov[[1]][[i]][1:d,(d+1):(2*d)] = -(trans_sd^(-2))*diag(d)
       Cross_cov[[1]][[i]][(d+1):(2*d),1:d] = -(trans_sd^(-2))*diag(d)
@@ -337,6 +339,7 @@ IG_2 =1/2
       Cross_cov[[T-1]][[i]][(d+1):(2*d),1:d] = -(trans_sd^(-2))*diag(d)
       Cross_cov[[T-1]][[i]][(d+1):(2*d),(d+1):(2*d)] = (trans_sd^(-2))*diag(d)+V_X_cumulative[[T]][[i]]
       Cross_cov[[T-1]][[i]] = ginv(Cross_cov[[T-1]][[i]])
+      #----------------------------------------------------------------------- 
       
       
       
