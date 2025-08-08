@@ -231,6 +231,9 @@ IG_2 =1/2
     
     for (i in 1:n){
       
+      
+      #----------------------------------------------------------------------- Computing Potentials Mean and Var.
+      
       for (t in 1:T){
         
         for (j in 1:n){
