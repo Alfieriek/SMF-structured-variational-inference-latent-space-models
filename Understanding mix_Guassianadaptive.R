@@ -260,7 +260,8 @@ IG_2 =1/2
         }
       }
       
-      #----------------------------------------------------------------------- Computing messages
+      #-----------------------------------------------------------------------
+      # Computing messages Forward.mean.new = \mu_{i, t \to t+1 }  and forward.var.new = \Sigma_{i, t \to t+1 } 
       Forward.var.new[[1]][[i]] = -rho^(-2)*trans_sd^(4)*(sigma_X1^(-2)*diag(d)+rho^2*trans_sd^(-2)*diag(d)+V_X_cumulative[[1]][[i]])
       
       Forward.Mean.new[[1]][i,] = -rho^(-1)*trans_sd^2*
@@ -288,8 +289,8 @@ IG_2 =1/2
       
       #-----------------------------------------------------------------------
       
-      
-      #----------------------------------------------------------------------- This is the first equation from eq(22)
+      # MYBW UPDATES PG 14
+      #----------------------------------------------------------------------- This is the first equation from eq(20)
       for(t in 1:T){
         if(t == 1)
         { Sigma_X_new[[t]][[i]] = ginv(sigma_X1^(-2)*diag(d)+rho^2*trans_sd^(-2)*diag(d)+ginv(Backward.var.new[[t+1]][[i]])+V_X_cumulative[[t]][[i]])
