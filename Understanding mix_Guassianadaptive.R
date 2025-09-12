@@ -289,7 +289,6 @@ IG_2 =1/2
       
       #-----------------------------------------------------------------------
       
-      # MYBW UPDATES PG 14
       #----------------------------------------------------------------------- This is the first equation from eq(20)
       for(t in 1:T){
         if(t == 1)
@@ -323,7 +322,7 @@ IG_2 =1/2
       }
       #----------------------------------------------------------------------- 
       
-      #----------------------------------------------------------------------- This is the second equation from eq(22)
+      #----------------------------------------------------------------------- This is the second equation from eq(22) ,just the Covariance of (Xit, Xi(t+1))
       Cross_cov[[1]][[i]][1:d,1:d] = sigma_X1^(-2)*diag(d)+trans_sd^(-2)*diag(d)+V_X_cumulative[[1]][[i]]
       Cross_cov[[1]][[i]][1:d,(d+1):(2*d)] = -(trans_sd^(-2))*diag(d)
       Cross_cov[[1]][[i]][(d+1):(2*d),1:d] = -(trans_sd^(-2))*diag(d)
@@ -349,6 +348,7 @@ IG_2 =1/2
       
       
       
+      #----------------------------------------------------------------------- This is from eq(23), expectation of  Frobenius Norm of X, see pg 15 'b'
       
       b=0
       b0 = 0
@@ -374,6 +374,8 @@ IG_2 =1/2
       # }  else{
       #   tau_inv_sq =  exp(besselK.nuAsym(x=sqrt(b), nu=-ded_free-1,k.max=5,log=T)-besselK.nuAsym(x=sqrt(b), nu=-ded_free,k.max=5,log=T))/sqrt(b)-2*ded_free/b
       # }
+      
+      # Updating tau
       
       if (global_prior =='Gamma'){
         
