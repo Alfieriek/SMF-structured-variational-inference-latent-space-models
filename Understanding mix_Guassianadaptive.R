@@ -474,3 +474,5 @@ IG_2 =1/2
 #   return(list(err=err[2:(k-1)],trans_sd=trans_sd, Mean_X= Mean_X, Sigma_X= Sigma_X,  mean_beta  = mean_beta, sigma_beta =sigma_beta , iter = k-1 ))
 # }
 
+  plot(Mean_X[[3]][,1],True_X[[3]][,1])
+  

@@ -36,7 +36,7 @@ source('mcmc_Gaussian_adaptive.R')
 
 #--------------------------------Data Generation---------------------
 set.seed(2020)
-n = 5   # n = 100;  
+n = 30   # n = 100;  
 
 T = 4   # T = 100;
 
